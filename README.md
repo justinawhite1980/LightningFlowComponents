@@ -36,3 +36,8 @@ You do not need to be using the lightning experience to use these flow extension
 # Submissions Encouraged!
 Have you built a useful or interesting Flow Component? We encourage you to make a pull request and add it to this repo. Also feel free to enhance or fix any existing component. General conversations about the components is carried out in the Issues section above or at the [Salesforce Automation Trailblazer Community](https://success.salesforce.com/_ui/core/chatter/groups/GroupProfilePage?g=0F9300000001rzcCAA).
 
+<a href="https://githubsfdeploy.herokuapp.com">
+  <img alt="Deploy to Salesforce"
+       src="https://raw.githubusercontent.com/afawcett/githubsfdeploy/master/deploy.png">
+</a>
+
