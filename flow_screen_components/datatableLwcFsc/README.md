@@ -39,4 +39,8 @@ Features:
 
 Additions:  New Column Attribute to support column filtering
 
+<a href="https://githubsfdeploy.herokuapp.com">
+  <img alt="Deploy to Salesforce"
+       src="https://raw.githubusercontent.com/afawcett/githubsfdeploy/master/deploy.png">
+</a>
 
