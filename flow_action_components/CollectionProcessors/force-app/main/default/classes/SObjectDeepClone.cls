@@ -63,7 +63,10 @@ public with sharing class SObjectDeepClone {
                 clone.Id = null;
             }
             markAsCloned(clone);
-            insert clone;
+            
+            //insert clone without triggering duplicate rules            
+            Database.DMLOptions dml = new Database.DMLOptions(); 
+            dml.DuplicateRuleHeader.AllowSave = true; Database.SaveResult sr = Database.insert(clone, dml);
 
             clonedChildrenPerTypeMap = new Map<String, List<SObject>>();
             for (String relationshipName : this.relationshipMap.keySet()) {
@@ -191,7 +194,8 @@ public with sharing class SObjectDeepClone {
         if (fMap != null) {
             for (Schema.SObjectField ft : fMap.values()) { // loop through all field tokens (ft)
                 Schema.DescribeFieldResult fd = ft.getDescribe(); // describe each field (fd)
-                if (fd.isCreateable()) { // field is creatable
+                // *** Added Not Unique - Eric Smith - 3/6/21
+                if (fd.isCreateable() && !fd.isUnique()) { // field is creatable
                     selectFields.add(fd.getName());
                 }
             }

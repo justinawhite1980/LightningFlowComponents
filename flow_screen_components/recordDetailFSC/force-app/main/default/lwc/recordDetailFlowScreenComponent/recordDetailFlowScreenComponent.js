@@ -15,10 +15,12 @@ export default class recordDetailFSC extends LightningElement {
     @api isCancelButton = false;
     @api availableActions = [];
     @api showCancelButton = false;
-    @api showtoast = false;
+    @api suppressToast = false;
     @api SaveBtnLabel = 'Save';
     @api CancelBtnLabel = 'Cancel';
     @api columnsize = 2;
+    @api suppressUnderline = false;
+    @api boxclass='slds-box slds-theme_default';
     
 
     @track elementSize = 6;
@@ -128,8 +130,8 @@ export default class recordDetailFSC extends LightningElement {
 
     handleSuccess(event) {
         this.recordId = event.detail.id;
-        // showtoast is True?
-        if(this.showtoast){
+         
+        if(!this.suppressToast){
             this.showToast(this.labels.successMessage, this.labels.recordSaveSuccessMessage, 'success', true);
         }
         // is Flow Navigation selected?
@@ -186,7 +188,7 @@ export default class recordDetailFSC extends LightningElement {
     }
 
     showToast(title, message, variant, autoClose) {
-        this.template.querySelector('c-toast-message').showCustomNotice({
+        this.template.querySelector('c-fsc_toast-message').showCustomNotice({
             detail: {
                 title: title, message: message, variant: variant, autoClose: autoClose
             }

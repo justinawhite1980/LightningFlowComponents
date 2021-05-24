@@ -1,4 +1,9 @@
 /**
+ * 09/03/20     Eric Smith      Unescaped {} characters in the Metadata String in case it was passed in that way from a Flow
+ * 
+ * 08/21/20     Eric Smith      Added Extracted and Escaped Metadata Strings to the Output Attributes
+ * 
+ * 08/08/20     Eric Smith      Display Error Message on Deploy if one is caught
  * 
  * 07/01/20     Eric Smith      Updated to navigate to the next node in the Flow on deployment completion
  *                              This will work best if you disable the footer on the Flow screen 
@@ -23,6 +28,8 @@ export default class TransferMetadata extends LightningElement {
     @track activity;
     transferComplete = false;
     @api zipFileString = '';
+    @api extractedMetadataString = '';
+    @api escapedMetadataString = '';
     @api metadataName;
     @api transferMode;
     @api metadataString;
@@ -76,7 +83,13 @@ export default class TransferMetadata extends LightningElement {
         // this.modifiedName = this.metadataName + '_Converted';
         this.modifiedName = this.metadataName;
         console.log('this.metadataName is: ' + this.modifiedName);
-        fbc_deployMetadata({ metadataText : this.metadataString, metadataName : this.modifiedName, testLevel: null, objectType : this.objectType,  })
+
+        // Special Processing to unescape characters that could be passed in by a flow
+        let documentContent = this.metadataString;
+        documentContent = documentContent.replaceAll('&lbrace;', '{');
+        documentContent = documentContent.replaceAll('&rbrace;', '}');
+
+        fbc_deployMetadata({ metadataText : documentContent, metadataName : this.modifiedName, testLevel: null, objectType : this.objectType,  })        
         .then(result => {
             console.log('result of deployment request is: ' + result);
             console.log('successfully sent async deployment request');
@@ -94,6 +107,7 @@ export default class TransferMetadata extends LightningElement {
         })
         .catch(error => {
             console.log('error calling fbc_deployMetadata from transfer');
+            this.activity = 'Error: ' + JSON.stringify(error.body.message);
             this.error = error;
         });
     }
@@ -162,11 +176,19 @@ export default class TransferMetadata extends LightningElement {
                 console.log('data is: ' + result);
                 this.activity = 'metadata retrieved successfully. '
                 console.log('this.activity is: ' + this.activity);
-                this.zipFileString = result;
-                const attributeChangeEvent = new FlowAttributeChangeEvent('zipFileString', this.zipFileString);
+
+                let returnResults = JSON.parse(result);
+                this.zipFileString = returnResults.zipFile;
+                let attributeChangeEvent = new FlowAttributeChangeEvent('zipFileString', this.zipFileString);
+                this.dispatchEvent(attributeChangeEvent);                      
+
+                this.extractedMetadataString = returnResults.extractedFlowMetadata;
+                attributeChangeEvent = new FlowAttributeChangeEvent('extractedMetadataString', this.extractedMetadataString);
+                this.dispatchEvent(attributeChangeEvent);     
+
+                this.escapedMetadataString = returnResults.escapedFlowMetadata;
+                attributeChangeEvent = new FlowAttributeChangeEvent('escapedMetadataString', this.escapedMetadataString);
                 this.dispatchEvent(attributeChangeEvent);
-                
-              
 
                 const nextNavigationEvent = new FlowNavigationNextEvent();
                 this.dispatchEvent(nextNavigationEvent);

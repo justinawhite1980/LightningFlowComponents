@@ -29,7 +29,8 @@ export default class FlowWrapper extends LightningElement {
 
     get fullUrl() {
         let params = (this.flowParams ? '&params=' + encodeURI(this.flowParams) : '');
-        let origin = (this.flowParams ? '&origin=' + encodeURI(this.url) : '');
+        let origin = (this.url ? '&origin=' + encodeURI(this.url) : '');
+        //console.log('calling flow: ' + this.flowName + ' with params: ' + params + ' with origin: ' + origin);
         return this.url + '/apex/flowWrapper?flowname=' + this.flowName +  params+origin;
     }
 }
